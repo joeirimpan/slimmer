@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages
 import sys, os
 
-import slimmer
-version = slimmer.__version__ # hate repeating myself
+# import slimmer
+# version = slimmer.__version__ # hate repeating myself
 
 README = os.path.join(os.path.dirname(__file__), 'README.txt')
 long_description = open(README).read().strip() + "\n\n"
 
 
 setup(name='slimmer',
-      version=version,
+      version="0.1.31",
       description="HTML,XHTML,CSS,JavaScript optimizer",
       long_description=long_description,
       keywords='slimmer optimizer optimiser whitespace',
