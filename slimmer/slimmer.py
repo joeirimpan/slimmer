@@ -109,9 +109,9 @@ __all__=['acceptableSyntax','guessSyntax','slimmer','css_slimmer',
          '__version__']
 
 import re, os, sys, getopt
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 try:
-    from js_function_slimmer import slim as js_function_slimmer
+    from .js_function_slimmer import slim as js_function_slimmer
 except ImportError:
     js_function_slimmer = None
 
@@ -187,7 +187,7 @@ def slimmer(code, syntax=XHTML, hardcore=False):
 try:
     import itertools
     def anyTrue(pred, seq):
-        return True in itertools.imap(pred,seq)
+        return True in map(pred,seq)
 except ImportError:
     def anyTrue(pred, seq):
         for e in seq:
@@ -443,7 +443,7 @@ def uniqify(all):
     u = {}
     for each in all:
         u[each]=1
-    return u.keys()
+    return list(u.keys())
 
 def simplifyHexColours(text):
     """ Replace all colour declarations where pairs repeat.
@@ -455,17 +455,17 @@ def simplifyHexColours(text):
     for e in uniqify(all_hex_encodings):
         if e[1]==e[2] and e[3]==e[4] and e[5]==e[6]:
             colour_replacements[e] = '#'+e[1]+e[3]+e[5]
-    for k, v in colour_replacements.items():
+    for k, v in list(colour_replacements.items()):
         text = text.replace(k, v)
     return text
 
 
 def __grr():
-    print "Usage: python slimmer.py /path/to/input.html [xhtml|html|css|js] /path/to/output.html"
+    print("Usage: python slimmer.py /path/to/input.html [xhtml|html|css|js] /path/to/output.html")
 
 def _pingable(url):
     try:
-        urllib2.urlopen(url)
+        urllib.request.urlopen(url)
         return 1
     except:
         return 0
@@ -489,7 +489,7 @@ def __guess_syntax(filepath):
         if os.path.isfile(filepath):
             f=open(filepath)
         else:
-            f=urllib2.urlopen(filepath)
+            f=urllib.request.urlopen(filepath)
             
         line = f.readline()
         c = 0 
@@ -547,10 +547,10 @@ Options:
                                             
     
 def __showversion():
-    print __version__
+    print(__version__)
     
 def __usage():
-    print usage
+    print(usage)
 
 class Usage(Exception):
     def __init__(self, msg):
@@ -563,12 +563,12 @@ def main(argv=None):
         try:
             opts, args = getopt.getopt(argv[1:], "ho:vt", 
                            ["help", "output=", "version", "test", "hardcore"])
-        except getopt.error, msg:
+        except getopt.error as msg:
             raise Usage(msg)
         # more code, unchanged
-    except Usage, err:
-        print >>sys.stderr, err.msg
-        print >>sys.stderr, "for help use --help"
+    except Usage as err:
+        print(err.msg, file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2
     
     outputfile = None
@@ -612,18 +612,18 @@ def main(argv=None):
         syntax = __guess_syntax(inputfile)
     
     if inputfile is None:
-        print >>sys.stderr, "No input file"
-        print >>sys.stderr, "for help use --help"
+        print("No input file", file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2        
         
     if not acceptableSyntax(syntax):
-        print >>sys.stderr, "Unrecognized syntax"
-        print >>sys.stderr, "for help use --help"
+        print("Unrecognized syntax", file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2
     
     if otherargs:
-        print >>sys.stderr, "Unrecognized arguments %r"%otherargs
-        print >>sys.stderr, "for help use --help"
+        print("Unrecognized arguments %r"%otherargs, file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2
 
     
@@ -636,8 +636,8 @@ def main(argv=None):
 from time import time
 
 def _gzipText(content):
-    import cStringIO,gzip
-    zbuf = cStringIO.StringIO()
+    import io,gzip
+    zbuf = io.StringIO()
     zfile = gzip.GzipFile(None, 'wb', 9, zbuf)
     zfile.write(content)
     zfile.close()
@@ -647,7 +647,7 @@ def run(inputfile, syntax, speedtest, outputfile, hardcore=False):
     if os.path.isfile(inputfile):
         contents = open(inputfile).read()
     else:
-        contents = urllib2.urlopen(inputfile).read()
+        contents = urllib.request.urlopen(inputfile).read()
     t0=time()
     slimmed = slimmer(contents, syntax, hardcore=hardcore)
     t=time()-t0
@@ -668,19 +668,19 @@ def run(inputfile, syntax, speedtest, outputfile, hardcore=False):
         size_difference = before-after
         if size_difference > 10000:
             size_difference = "%s (%sK)"%(size_difference, size_difference/1024)
-        print "Took %s seconds"%round(t, 3)
-        print "Bytes before: %s"%size_before
-        print "Bytes after:  %s"%size_after
-        print "Bytes after zlib: %s"%after_zlibbed
-        print "Bytes after gzip: %s"%after_gzip
-        print "Bytes saved:  %s "%size_difference,
-        print "(%s%% of original size)"%(100*round(after/float(before), 2))
+        print("Took %s seconds"%round(t, 3))
+        print("Bytes before: %s"%size_before)
+        print("Bytes after:  %s"%size_after)
+        print("Bytes after zlib: %s"%after_zlibbed)
+        print("Bytes after gzip: %s"%after_gzip)
+        print("Bytes saved:  %s "%size_difference, end=' ')
+        print("(%s%% of original size)"%(100*round(after/float(before), 2)))
         
     elif outputfile:
         open(outputfile, 'w').write(slimmed)
         
     else:
-        print >>sys.stdout, slimmed
+        print(slimmed, file=sys.stdout)
     
     
 if __name__=='__main__':

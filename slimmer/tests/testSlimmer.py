@@ -9,25 +9,25 @@ import slimmer
 
 VERBOSE = False
 
-from codechunks import *
+from .codechunks import *
 
 class SlimmerTestCase(unittest.TestCase):
     
     def _assert(self, str1, str2, name=''):
         """ special kind of assertEqual that strips """
         if not str1.strip() == str2.strip():
-            print '\n'+"-"*70
-            print "DIFFERENCES %s"%name
-            print "----Result|"+"-"*50
+            print('\n'+"-"*70)
+            print("DIFFERENCES %s"%name)
+            print("----Result|"+"-"*50)
             #print repr(str1.strip())
-            print str1.strip()
-            print "----Expect|"+"-"*50
+            print(str1.strip())
+            print("----Expect|"+"-"*50)
             #print repr(str2.strip())
-            print str2.strip()
-            print "-"*70
+            print(str2.strip())
+            print("-"*70)
             x = str1.strip()
             y = str2.strip()
-            print x
+            print(x)
             arrow = ''
             for i, e in enumerate(list(x)):
                 if e==y[i]:
@@ -35,7 +35,7 @@ class SlimmerTestCase(unittest.TestCase):
                 else:
                     arrow += "^"
                     break
-            print arrow            
+            print(arrow)            
         self.assertEqual(str1.strip(), str2.strip())
         #assert str1.strip() == str2.strip()
         #return self.assertEqual(str1.strip(), str2.strip())
@@ -55,14 +55,14 @@ class SlimmerTestCase(unittest.TestCase):
         for record in self.timed_records:
 
             if VERBOSE:
-                print "-- %s --:"%record['name']
-                print "%s seconds"%round(record['time'], 6)
-                print "Was: %s\tNow: %s"%(record['size1'], record['size2'])
+                print("-- %s --:"%record['name'])
+                print("%s seconds"%round(record['time'], 6))
+                print("Was: %s\tNow: %s"%(record['size1'], record['size2']))
                 percent = round(100*record['size2']/float(record['size1']), 5)
                 percent = "%s%%"%percent
                 difference = record['size1'] - record['size2']
-                print "Difference: %s (%s)"%(difference, percent)
-                print 
+                print("Difference: %s (%s)"%(difference, percent))
+                print() 
             
 
     def atest(self, str1, str2, name, func, printresult=VERBOSE, *args, **kw):
@@ -72,9 +72,9 @@ class SlimmerTestCase(unittest.TestCase):
         
         t0=time()
         args = [before]+list(args)
-        result = apply(func, args, kw)
+        result = func(*args, **kw)
         if printresult:
-            print result
+            print(result)
         T = time()-t0
         
         self.timer(name,time()-t0, len(before), len(result))
@@ -86,7 +86,7 @@ class SlimmerTestCase(unittest.TestCase):
     #--- Start the madness! ----------------------------------------------
     
     def testGuessSyntax(self):
-        for var, value in globals().items():
+        for var, value in list(globals().items()):
             syntax = None
             if var.find('CSS')> -1:
                 syntax = slimmer.guessSyntax(value)
@@ -308,18 +308,18 @@ class SlimmerTestCase(unittest.TestCase):
         here = os.path.dirname(__file__)
         before = codecs.open(os.path.join(here, 'euc-jp.html'),
                              'r','euc-jp').read()
-        assert isinstance(before, unicode)
+        assert isinstance(before, str)
         after = slimmer.html_slimmer(before)
-        assert isinstance(after, unicode)
+        assert isinstance(after, str)
         
     def testUnicodeHTML2(self):
         here = os.path.dirname(__file__)
         before = codecs.open(os.path.join(here, 'utf-8.html'),
                              'r','utf-8').read()
-        assert isinstance(before, unicode)
+        assert isinstance(before, str)
         after = slimmer.html_slimmer(before)
-        assert isinstance(after, unicode)
-        expect = u'<html><p>\u0e2a\u0e27\u0e31\u0e2a\u0e14\u0e35\u0e04\u0e23\u0e31\u0e1a</p></html>'
+        assert isinstance(after, str)
+        expect = '<html><p>\u0e2a\u0e27\u0e31\u0e2a\u0e14\u0e35\u0e04\u0e23\u0e31\u0e1a</p></html>'
         assert after == expect
         
 

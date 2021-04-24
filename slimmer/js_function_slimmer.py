@@ -91,7 +91,7 @@ def slim_params(code):
         old_functions[old_function] = new_function
         
     # killer regex
-    regex = '|'.join([re.escape(x) for x in old_functions.keys()])
+    regex = '|'.join([re.escape(x) for x in list(old_functions.keys())])
     def replacer(match):
         return old_functions.get(match.group())
     return re.sub(regex, replacer, new_code)
@@ -102,7 +102,7 @@ class NamesGenerator:
         self.i = 0
         self.pool = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         
-    def next(self):
+    def __next__(self):
         try:
             e = self.pool[self.i]
             self.i = self.i + 1
@@ -117,7 +117,7 @@ class NamesGenerator:
             except IndexError:
                 self.i += 1
                 self.j = 0
-                return self.next()
+                return next(self)
         
         return '_%s' % e
 
@@ -130,7 +130,7 @@ def slim_func_names(js):
         if len(func_name) > 2 and count > 1:
             #print func_name, count, 
             #len(re.findall(r'\b%s\b'% re.escape(func_name), js))
-            new_name = new_names_generator.next()
+            new_name = next(new_names_generator)
             if re.findall(r'\b%s\b' % re.escape(new_name), js):
                 #print  "new_name:%r\n\n%s" % (new_name, js)
                 continue
@@ -156,14 +156,14 @@ def test(inputbuffer):
     js1 = inputbuffer.read()
     res = slim(js1)
     t1 = time()
-    print t1-t0
+    print(t1-t0)
     return res
     
 if __name__=='__main__':
     import sys
     argv = sys.argv[1:]
     if argv:
-        print test(open(argv[0]))
+        print(test(open(argv[0])))
     else:
         test(sys.stdin)
 

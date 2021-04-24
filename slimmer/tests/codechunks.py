@@ -51,13 +51,13 @@ expect_CSS_3 = r'''
 '''
 #----------------------------------------------------------------------------
 
-CSS_3b = unicode(CSS_3)
+CSS_3b = str(CSS_3)
 
-expect_CSS_3b = unicode(expect_CSS_3)
+expect_CSS_3b = str(expect_CSS_3)
 
 
 #----------------------------------------------------------------------------
-CSS_3c = u'''
+CSS_3c = '''
 body {
     color:#000000;
     color:#ccFF99;
@@ -65,7 +65,7 @@ body {
     }
 '''    
 
-expect_CSS_3c = u'''
+expect_CSS_3c = '''
 body{color:#000;color:#cF9;\xa3}'''
 
 #----------------------------------------------------------------------------
@@ -282,7 +282,7 @@ expect_HTML_7='''
 
 #----------------------------------------------------------------------------
 
-HTML_8=u'''
+HTML_8='''
 <html>
   <style>
   * { color:#000000; background-color:#ffcc99 ; }
@@ -293,14 +293,14 @@ HTML_8=u'''
 </html>
 '''
 
-expect_HTML_8=u'''
+expect_HTML_8='''
 <html><style> *{color:#000;background-color:#fc9}</style><body><div style="color:#CCCCCC; background-color: #ee99cc">Pay with \xa3</div></body></html>
 '''
 
 
 #----------------------------------------------------------------------------
 
-HTML_9=u'''
+HTML_9='''
 <html>
   <style>
   * { color:#000000; 
@@ -313,7 +313,7 @@ HTML_9=u'''
 </html>
 '''
 
-expect_HTML_9=u'''
+expect_HTML_9='''
 <html><style> *{color:#000;background-color:#fc9}</style><body><div style="color:#CCCCCC; background-color: #ee99cc">Pay with \xa3</div></body></html>
 '''
 

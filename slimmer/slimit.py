@@ -4,8 +4,8 @@
 A command line program wrapper to slimmer
 """
 
-from slimmer import *
-from slimmer import run
+from .slimmer import *
+from .slimmer import run
 import CommandLineApp
 
 class slimit(CommandLineApp.CommandLineApp):
@@ -32,7 +32,7 @@ To save to a particular file other than stdout:
     
     def optionHandler_version(self):
         """Prints version and exits"""
-        print __version__
+        print(__version__)
         
         
     speedtest = 0
@@ -60,10 +60,10 @@ To save to a particular file other than stdout:
         Run the slimmer
         """
         if syntax is None:
-            print "guess for", repr(filename),
+            print("guess for", repr(filename), end=' ')
             syntax = guessSyntax(filename)
-            print repr(syntax)
-        print syntax
+            print(repr(syntax))
+        print(syntax)
         run(filename, syntax, self.speedtest, self.outputfile, hardcore=self.hardcore)
         
         
